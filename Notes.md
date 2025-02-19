@@ -1,4 +1,5 @@
 EKS
+
     Amazon EKS recommends you use at least two subnets that are in different Availability Zones during cluster creation. 
     The subnets you pass in during cluster creation are known as cluster subnets. 
     
