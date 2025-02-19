@@ -1,1 +1,1 @@
-# poc-eks
+# POC

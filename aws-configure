@@ -1,0 +1,25 @@
+# create access keys for developer
+
+# $ aws configure --profile develper
+# $ aws sts get-caller-identity --profile developer
+# $ aws eks update-kubeconfig \
+#     --region us-east-2 \
+#     --name staging-demo \
+#     --profile developer
+
+# kubectl config view --minify
+
+# kubectl get pods
+# kubectl auth can-i get pods
+# kubectl auth can-i * *
+
+# $ vi ~/.aws/config
+
+    # [default]
+    # [profile develper]
+    # [profile manager]
+
+    # [profile eks-admin]
+    # role_arn = arn:aws:iam::xxxxxxxxx:role/staging-demo-eks-admin
+    # source_profile = manager
+
