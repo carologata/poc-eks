@@ -3,7 +3,15 @@ EKS
     Amazon EKS recommends you use at least two subnets that are in different Availability Zones during cluster creation. 
     The subnets you pass in during cluster creation are known as cluster subnets. 
     
-    Kubernetes worker nodes can run in the cluster subnets, but it is not recommended. During cluster upgrades Amazon EKS provisions additional ENIs in the cluster subnets. When your cluster scales out, worker nodes and pods may consume the available IPs in the cluster subnet. Hence in order to make sure there are enough available IPs you might want to consider using dedicated cluster subnets with /28 netmask.
+    Kubernetes worker nodes can run in the *cluster subnets, but it is not recommended. During cluster upgrades Amazon EKS provisions additional ENIs in the cluster subnets. When your cluster scales out, worker nodes and pods may consume the available IPs in the cluster subnet. Hence in order to make sure there are enough available IPs you might want to consider using dedicated cluster subnets with /28 netmask.
+
+    *The cluster subnet is where the EKS control plane components reside, including the API server. 
+
+    The actual control plane (API server, etcd, scheduler, etc.) → Runs in an AWS-managed VPC that you don’t control.
+    However, AWS still needs to connect your worker nodes to the control plane.
+    To do this, AWS creates ENIs (Elastic Network Interfaces) in your VPC.
+    These ENIs allow worker nodes & kubectl to communicate with the control plane API.
+    That’s why you still need to provide subnets for AWS to place these ENIs.
 
     Kubernetes worker nodes can run in either a public or a private subnet. Whether a subnet is public or private refers to whether traffic within the subnet is routed through an internet gateway. Public subnets have a route table entry to the internet through the internet gateway, but private subnets don’t.
 
@@ -13,22 +21,19 @@ EKS
 
     You can configure VPC and Subnets in three different ways:
 
-    Using only public subnets
-
+    - Using only public subnets:
     In the same public subnets, both nodes and ingress resources (such as load balancers) are created. Tag the public subnet with kubernetes.io/role/elb
+    to construct load balancers that face the internet. In this configuration, the cluster endpoint can be configured to be public, private, or both (public and private). 
 
-    to construct load balancers that face the internet. In this configuration, the cluster endpoint can be configured to be public, private, or both (public and private).
-    Using private and public subnets
-
+    - Using private and public subnets:
     Nodes are created on private subnets, whereas Ingress resources are instantiated in public subnets. You can enable public, private, or both (public and private) access to the cluster endpoint. Depending on the configuration of the cluster endpoint, node traffic will enter via the NAT gateway or the ENI.
-    Using only private subnets
 
-    Both nodes and ingress are created in private subnets. Using the kubernetes.io/role/internal-elb
-    subnet tag to construct internal load balancers. Accessing your cluster’s endpoint will require a VPN connection. You must activate AWS PrivateLink for EC2 and all Amazon ECR and S3 repositories. Only the private endpoint of the cluster should be enabled. We suggest going through the EKS private cluster requirements before provisioning private clusters.
+    - Using only private subnets:
+    Both nodes and ingress are created in private subnets. Using the kubernetes.io/role/internal-elb subnet tag to construct internal load balancers. Accessing your cluster’s endpoint will require a VPN connection. You must activate AWS PrivateLink for EC2 and all Amazon ECR and S3 repositories. Only the private endpoint of the cluster should be enabled. We suggest going through the EKS private cluster requirements before provisioning private clusters.
     
 Sources:
-    https://docs.aws.amazon.com/eks/latest/best-practices/subnets.html
-    https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html
+https://docs.aws.amazon.com/eks/latest/best-practices/subnets.html
+https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html
 
 
 NAT Gateway
