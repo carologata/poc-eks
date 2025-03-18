@@ -1,0 +1,16 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: my-admin-binding 
+roleRef: # this defines which role is being assigned to the subject
+  kind: ClusterRole # Assigns a ClusterRole (instead of a normal Role)
+  name: cluster-admin # Grants the cluster-admin role, which has full control over the Kubernetes cluster
+  apiGroup: rbac.authorization.k8s.io
+subjects: # This defines who is getting permissions.
+  - kind: Group # This means we are assigning permissions to a Kubernetes group
+    name: my-admin  # The name of the group inside Kubernetes.
+    apiGroup: rbac.authorization.k8s.io # Specifies the API group used for authorization.
+
+# This ClusterRoleBinding assigns cluster-admin privileges to all users in the my-admin group
+# IAM role (eks_admin) is mapped to my-admin in Terraform configuration

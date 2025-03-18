@@ -68,3 +68,24 @@ AWS IAM Role
         Defines what actions the role can perform.
         Attached separately via IAM Policy Attachment or inline policy.
         Grants permissions on AWS resources (e.g., S3, DynamoDB, EC2).
+
+ClusterRoleBinding and RoleBinding
+
+    A ClusterRoleBinding is used when you want to grant permissions across all namespaces.
+    If you want to restrict permissions to a specific namespace, you would use a RoleBinding instead.
+
+Horizontal Pod Autoscaler (HPA)
+    The Metrics Server is required for HPA to get real-time resource utilization (e.g., CPU and memory) of pods.
+    Metrics Server does not require IAM permissions because it only reads metrics from the Kubernetes API and does not interact with AWS services.
+    If the Metrics Server is missing, HPA will not work and will show errors like unable to fetch metrics
+    it calculates the average CPU utilization across all pods in the target deployment (or StatefulSet/ReplicaSet). 
+    If the average CPU utilization exceeds the target, HPA scales up.
+    If only some pods exceed the target but the average remains below, HPA will not scale.
+
+CLuster Autoscaler 
+    Nees a cluster autoscaler to scale up or down the cluster create new nodes.
+    Cluster Autoscaler (CA) adds or removes EC2 nodes in an EKS cluster based on pod resource requests.
+    It integrates with AWS Auto Scaling Groups (ASG) to launch or terminate worker nodes.
+    It needs IAM permissions to:
+     - List, describe, and modify Auto Scaling Groups.
+     - Attach new worker nodes to the cluster.
