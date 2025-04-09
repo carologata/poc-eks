@@ -36,10 +36,7 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         log.info("Creating new user: {}", user.getName());
-        log.debug("User details: {}", user);
-        
-        // In a real application,   save this to a database
-        
+        log.debug("User details: {}", user);        
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
